@@ -1,0 +1,105 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "SMSGlobal Intgration Testing via API",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "api/v1/message": {
+            "get": {
+                "tags": [
+                    "Messages"
+                ],
+                "summary": "Get list of sent Message via SMSGlobal",
+                "description": "Get list of sent via SMSGlobal API",
+                "parameters": [
+                    {
+                        "name": "API key",
+                        "in": "header",
+                        "description": "Your SMSGlobal REST API Key",
+                        "required": true
+                    },
+                    {
+                        "name": "API Secret",
+                        "in": "header",
+                        "description": "Your SMSGlobal REST API Secret",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "403": {
+                        "description": "Unable to determine API Key or Secret!"
+                    },
+                    "200": {
+                        "description": "List of messages"
+                    },
+                    "400": {
+                        "description": "Unable to locate messages!"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Messages"
+                ],
+                "summary": "Post Message via SMSGlobal",
+                "description": "Post message via SMSGlobal API",
+                "parameters": [
+                    {
+                        "name": "API key",
+                        "in": "header",
+                        "description": "Your SMSGlobal REST API Key",
+                        "required": true
+                    },
+                    {
+                        "name": "API Secret",
+                        "in": "header",
+                        "description": "Your SMSGlobal REST API Secret",
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "description": "POST your message and destination number",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "message",
+                                    "destination"
+                                ],
+                                "properties": {
+                                    "message": {
+                                        "type": "string",
+                                        "format": "",
+                                        "example": "Test Message"
+                                    },
+                                    "destination": {
+                                        "type": "string",
+                                        "format": "",
+                                        "example": "04xxxxxxxx"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "403": {
+                        "description": "Unable to determine API Key or Secret!"
+                    },
+                    "400": {
+                        "description": "Unable to locate Message or Destination in the payload!"
+                    },
+                    "200": {
+                        "description": "Your message has been dispatched successfully."
+                    }
+                }
+            }
+        }
+    },
+    "security": [
+        []
+    ]
+}
