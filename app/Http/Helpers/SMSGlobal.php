@@ -15,7 +15,10 @@ class SMSGlobal
     private $base_uri = 'api.smsglobal.com';
     private $base_url = 'https://api.smsglobal.com/v2/';
     private $user_cred = [];
+
     public $errorMsg = [];
+    public $notices = [];
+    public $message_list = [];
 
     function __construct(Request $request)
     {
@@ -52,7 +55,7 @@ class SMSGlobal
 
         $key = $this->user_cred['smsglobal_secret'];
 
-        $mac_arr = [$ts_now, $nonce, $method, '/v2/sms/', $this->base_uri, 443, ''];
+        $mac_arr = [$ts_now, $nonce, $method, '/v2/sms', $this->base_uri, 443, ''];
         //$mac_arr = ['1325376000', 'random-string', 'POST', '/v2/sms/', 'api.smsglobal.com', 443, '']; //debug
         $mac_payload = sprintf("%s\n", implode("\n", $mac_arr));
 
@@ -63,21 +66,45 @@ class SMSGlobal
         return $auth_header;
     }
 
+    ////-----------------------------------------------------------------------------
+
+    /**
+     * @return bool
+     */
     public function get_messages()
     {
-        $auth_header = $this->generate_auth_header('GET');
+        $req_hdrs = [
+            'Authorization: '.$this->generate_auth_header('GET'),
+            'Content-Type: application/json',
+            'Accept application/json',
+        ];
 
         $pull_url = "{$this->base_url}sms";
-        $data_ret = curl_helper::run_curl($pull_url, 'GET', ['Authorization: '.$auth_header]);
-        var_dump($pull_url, $data_ret); exit;
+        $data_ret = curl_helper::run_curl($pull_url, 'GET', $req_hdrs, 'application/json');
+        //var_dump("<pre>", $pull_url, $data_ret); exit;
+
+        if(empty($data_ret) || !isset($data_ret['total']))
+        {
+            $this->errorMsg = ["Unable to process the request!", 500];
+            return false;
+        }
+
+        if((int)$data_ret['total']==0 || count($data_ret['messages'])==0)
+        {
+            $this->notices = ["You have no messages in your sentbox!", 204];
+            return true;
+        }
+
+        $this->message_list = $data_ret['messages'];
+        return true;
     }
 
 
     /**
-     * @param $POST
-     * @return none
+     * @param array $POST containing message and destination key-value pairs
+     * @return bool
      */
-    public function post_message($POST)
+    public function post_message($POST): bool
     {
         if(empty($POST['message']) || empty($POST['destination'])) {
             $this->errorMsg = ["Unable to locate Message or Destination in the payload!", 400];
@@ -90,13 +117,29 @@ class SMSGlobal
         ], JSON_FORCE_OBJECT);
 
         $req_hdrs = [
-            'Authorization: '.$this->generate_auth_header('GET'),
+            'Authorization: '.$this->generate_auth_header('POST'),
             'Content-Type: application/json',
             'Accept application/json',
         ];
 
         $push_url = "{$this->base_url}sms";
-        $data_ret = curl_helper::run_curl($push_url, 'POST', $req_hdrs, '', $post_payload);
-        var_dump($push_url, $data_ret); exit;
+        $data_ret = curl_helper::run_curl($push_url, 'POST', $req_hdrs, 'application/json', $post_payload);
+        //var_dump("<pre>", $push_url, $data_ret); exit;
+
+        if(empty($data_ret) || empty($data_ret['messages'][0]) || empty($data_ret['messages'][0]['status']))
+        {
+            $this->errorMsg = ["Unable to process the request!", 500];
+            return false;
+        }
+
+        if($data_ret['messages'][0]['status']!='sent')
+        {
+            $this->notices = ["The following is the status of your request: {$data_ret['messages'][0]['status']}", 202];
+            return true;
+        }
+        else
+        {
+            return true; //return $data_ret['messages'][0];
+        }
     }
 }

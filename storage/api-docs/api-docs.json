@@ -33,6 +33,12 @@
                     "404": {
                         "description": "Unable to locate messages!"
                     },
+                    "500": {
+                        "description": "Unable to process the request!"
+                    },
+                    "204": {
+                        "description": "You have no messages in your sentbox!"
+                    },
                     "200": {
                         "description": "List of messages"
                     }
@@ -91,6 +97,12 @@
                     },
                     "400": {
                         "description": "Unable to locate Message or Destination in the payload!"
+                    },
+                    "500": {
+                        "description": "Unable to process the request!"
+                    },
+                    "202": {
+                        "description": "The following is the status of your request: {STATUS}"
                     },
                     "200": {
                         "description": "Your message has been dispatched successfully."

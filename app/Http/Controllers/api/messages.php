@@ -52,9 +52,17 @@ use App\Http\Helpers\SMSGlobal;
  *    description="Unable to locate Message or Destination in the payload!",
  *  ),
  *  @OA\Response(
+ *    response=500,
+ *    description="Unable to process the request!",
+ *  ),
+ *  @OA\Response(
+ *    response=202,
+ *    description="The following is the status of your request: {STATUS}",
+ *  ),
+ * @OA\Response(
  *    response=200,
  *    description="Your message has been dispatched successfully.",
- *  )
+ *  ),
  * ),
  *
  * ------------------------------------------------------
@@ -88,6 +96,14 @@ use App\Http\Helpers\SMSGlobal;
  *    description="Unable to locate messages!",
  *  ),
  *  @OA\Response(
+ *    response=500,
+ *    description="Unable to process the request!",
+ *  ),
+ *  @OA\Response(
+ *    response=204,
+ *    description="You have no messages in your sentbox!",
+ *  ),
+ *  @OA\Response(
  *    response=200,
  *    description="List of messages",
  *  ),
@@ -118,8 +134,24 @@ class messages extends apiAbstractController
         ]);
     }
 
+    /**
+     * @param array $msg 2d array of [message, code]
+     */
+    private function msg_return($msg)
+    {
+        return response()
+        ->json([$msg[0]], $msg[1])
+        ->withHeaders([
+            'Content-Type'=>'application/json',
+        ]);
+    }
+
     ///////////////////////////////////////////////////////////////// PUBLIC Methods below
 
+    /**
+     * [TODO] - Paginated fetch and Paginated output
+     * [TODO] - more checks for empty return
+     */
     public function get()
     {
         #/ Check for initial errors from api
@@ -127,10 +159,42 @@ class messages extends apiAbstractController
         return $this->error_return($this->apiObj->errorMsg);
 
         #/ pull messages from api
-        $messages_list = $this->apiObj->get_messages();
-        var_dump($messages_list); exit;
+        $this->apiObj->get_messages();
+
+        #/ check for error
+        if(!empty($this->apiObj->errorMsg))
+        return $this->error_return($this->apiObj->errorMsg);
+
+        #/ check for other notices
+        if(!empty($this->apiObj->notices))
+        return $this->msg_return($this->apiObj->notices);
+
+        #generate output
+        $message_list = $this->apiObj->message_list;
+        $ret = [];
+        foreach($message_list as $mv)
+        {
+            $ret[] = [
+                'id'=> $mv['id'],
+                'status'=> strtoupper($mv['status']),
+                'sent_from'=> $mv['origin'],
+                'to'=> $mv['destination'],
+                'message'=> $mv['message'],
+                'sent_on'=> $mv['dateTime'],
+            ];
+        }
+
+        #/ return
+        return response()
+        ->json(['messages'=> $ret], 200)
+        ->withHeaders([
+            'Content-Type'=>'application/json',
+        ]);
     }
 
+    /**
+     * [TODO] - more checks for empty and error returns
+     */
     public function post()
     {
         #/ Check for initial errors from api
@@ -138,11 +202,15 @@ class messages extends apiAbstractController
         return $this->error_return($this->apiObj->errorMsg);
 
         #/ send message
-        $this->apiObj->post_message($this->POST);
+        $req_result = $this->apiObj->post_message($this->POST);
 
         #/ check for error
         if(!empty($this->apiObj->errorMsg))
         return $this->error_return($this->apiObj->errorMsg);
+
+        #/ check for other notices
+        if(!empty($this->apiObj->notices))
+        return $this->msg_return($this->apiObj->notices);
 
 
         #/ return success
