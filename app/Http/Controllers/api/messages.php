@@ -44,7 +44,7 @@ use App\Http\Helpers\SMSGlobal;
  *  ),
  *
  *  @OA\Response(
- *    response=400,
+ *    response=401,
  *    description="Unable to determine API Key or Secret!",
  *  ),
  *  @OA\Response(
@@ -80,11 +80,11 @@ use App\Http\Helpers\SMSGlobal;
  *  ),
  *
  *  @OA\Response(
- *    response=400,
+ *    response=401,
  *    description="Unable to determine API Key or Secret!",
  *  ),
  *  @OA\Response(
- *    response=400,
+ *    response=404,
  *    description="Unable to locate messages!",
  *  ),
  *  @OA\Response(
