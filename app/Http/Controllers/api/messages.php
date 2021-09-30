@@ -44,7 +44,7 @@ use App\Http\Helpers\SMSGlobal;
  *  ),
  *
  *  @OA\Response(
- *    response=403,
+ *    response=400,
  *    description="Unable to determine API Key or Secret!",
  *  ),
  *  @OA\Response(
@@ -80,20 +80,19 @@ use App\Http\Helpers\SMSGlobal;
  *  ),
  *
  *  @OA\Response(
- *    response=403,
+ *    response=400,
  *    description="Unable to determine API Key or Secret!",
- *  ),
- *  @OA\Response(
- *    response=200,
- *    description="List of messages",
  *  ),
  *  @OA\Response(
  *    response=400,
  *    description="Unable to locate messages!",
  *  ),
- * ) *
+ *  @OA\Response(
+ *    response=200,
+ *    description="List of messages",
+ *  ),
+ * )
  */
-
 
 class messages extends apiAbstractController
 {
@@ -107,10 +106,13 @@ class messages extends apiAbstractController
         $this->apiObj = new SMSGlobal($request);
     }
 
-    private function error_return($msg, $code=500)
+    /**
+     * @param array $msg 2d array of [error, code]
+     */
+    private function error_return($msg)
     {
         return response()
-        ->json(['error'=> $msg], $code)
+        ->json(['error'=> $msg[0]], $msg[1])
         ->withHeaders([
             'Content-Type'=>'application/json',
         ]);
@@ -122,7 +124,7 @@ class messages extends apiAbstractController
     {
         #/ Check for initial errors from api
         if(!empty($this->apiObj->errorMsg))
-        return $this->error_return($this->apiObj->errorMsg, 403);
+        return $this->error_return($this->apiObj->errorMsg);
 
         #/ pull messages from api
         $messages_list = $this->apiObj->get_messages();
@@ -133,7 +135,7 @@ class messages extends apiAbstractController
     {
         #/ Check for initial errors from api
         if(!empty($this->apiObj->errorMsg))
-        return $this->error_return($this->apiObj->errorMsg, 403);
+        return $this->error_return($this->apiObj->errorMsg);
 
         #/ send message
         $this->apiObj->post_message($this->POST);

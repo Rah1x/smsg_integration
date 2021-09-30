@@ -15,7 +15,7 @@ class SMSGlobal
     private $base_uri = 'api.smsglobal.com';
     private $base_url = 'https://api.smsglobal.com/v2/';
     private $user_cred = [];
-    public $errorMsg = '';
+    public $errorMsg = [];
 
     function __construct(Request $request)
     {
@@ -29,7 +29,7 @@ class SMSGlobal
         $smsglobal_secret = $request->getPassword();
 
         if(empty($smsglobal_key) || empty($smsglobal_secret)) {
-            $this->errorMsg = 'Unable to determine API Key or Secret!';
+            $this->errorMsg = ['Unable to determine API Key or Secret!', 400];
             return false;
         }
 
@@ -80,7 +80,7 @@ class SMSGlobal
     public function post_message($POST)
     {
         if(empty($POST['message']) || empty($POST['destination'])) {
-            $this->errorMsg = "Unable to locate Message or Destination in the payload!";
+            $this->errorMsg = ["Unable to locate Message or Destination in the payload!", 400];
             return false;
         }
 
