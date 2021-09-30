@@ -1,4 +1,5 @@
-This test project uses Laravel7x to build a middleware API system that communicates with SMS GLobal's APIs to send and receive messages
+# Laravel API middleware
+A test project using Laravel7x (with php7x) to build a middleware API system that communicates with an API provider (SMS GLobal in this case) to send and receive messages. The system itself is an API and returns application/json data.
 
 # API Endpoints
 
