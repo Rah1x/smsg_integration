@@ -7,7 +7,9 @@ A test project using Laravel7x (with php7x) to build a middleware API system tha
 /api/docs
 
 ### POST Message
-POST /api/v1/message
+POST /api/v1/message\
+\
+![example](public/images/readme_2.png)\
 
 ### Get List of Messages
 GET /api/v1/message\
