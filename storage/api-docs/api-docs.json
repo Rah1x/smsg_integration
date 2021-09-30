@@ -27,14 +27,14 @@
                     }
                 ],
                 "responses": {
-                    "403": {
+                    "401": {
                         "description": "Unable to determine API Key or Secret!"
+                    },
+                    "404": {
+                        "description": "Unable to locate messages!"
                     },
                     "200": {
                         "description": "List of messages"
-                    },
-                    "400": {
-                        "description": "Unable to locate messages!"
                     }
                 }
             },
@@ -86,7 +86,7 @@
                     }
                 },
                 "responses": {
-                    "403": {
+                    "401": {
                         "description": "Unable to determine API Key or Secret!"
                     },
                     "400": {
