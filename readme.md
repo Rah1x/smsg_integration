@@ -10,7 +10,8 @@ A test project using Laravel7x (with php7x) to build a middleware API system tha
 POST /api/v1/message
 
 ### Get List of Messages
-GET /api/v1/message\\
+GET /api/v1/message\
+\
 ![example](public/images/readme_1.png)\
 
 ### Authentication
