@@ -11,6 +11,7 @@ POST /api/v1/message
 
 ### Get List of Messages
 GET /api/v1/message
+![example](public/images/readme_1.png)
 
 ### Authentication
 Basic; with the customer's specific API key and Secret provided the operator (SMS GLobal)
