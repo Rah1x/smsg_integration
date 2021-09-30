@@ -2,13 +2,13 @@ This test project uses Laravel7x to build a middleware API system that communica
 
 # API Endpoints
 
-## API Docs
+### API Docs
 /api/docs
 
-## POST Message
+### POST Message
 POST /api/v1/message
 
-## Get List of Messages
+### Get List of Messages
 GET /api/v1/message
 
 # Notes
