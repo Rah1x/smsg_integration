@@ -3,6 +3,13 @@ A test project using Laravel7x (with php7x) to build a middleware API system tha
 
 # API Endpoints & Requirements
 
+### System Requirements
+- PHP ~7.2
+- Larave ^7.29
+
+### Authentication
+Basic; with the customer's specific API key and Secret provided the operator (SMS GLobal)
+
 ### API Docs (Swagger Docs)
 /api/docs
 
@@ -15,9 +22,6 @@ POST /api/v1/message\
 GET /api/v1/message\
 \
 ![example](public/images/readme_1.png)\
-
-### Authentication
-Basic; with the customer's specific API key and Secret provided the operator (SMS GLobal)
 
 # Notes
 - Due to shortage of time there is less formatting and documentation done. Similarly, for the same reason I only did basic checks and didnt do all the checks I would do otherwise
