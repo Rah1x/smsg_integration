@@ -4,8 +4,8 @@ A test project using Laravel7x (with php7x) to build a middleware API system tha
 # API Endpoints & Requirements
 
 ### System Requirements
-- PHP ~7.2
-- Larave ^7.29
+- PHP ^7.2
+- Laravel ^7.2
 
 ### Authentication
 Basic; with the customer's specific API key and Secret provided the operator (SMS GLobal)
